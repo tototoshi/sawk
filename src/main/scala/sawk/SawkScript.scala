@@ -1,19 +1,12 @@
 package sawk
 
-
-object Sawk {
-  def apply(script: SawkScript): Unit = {
-    script.run
-  }
-}
-
-abstract class SawkScript(lines: Iterator[String], val FS: String = "\t") {
+protected abstract class BaseSawkScript(it: Iterator[Seq[String]]) {
 
   private var _main: () => Unit = () => ()
   private var _begin: () => Unit = () => ()
   private var _end: () => Unit = () => ()
 
-  var $0: String = ""
+  var $0: Seq[String] = Nil
   var $1: String = ""
   var $2: String = ""
   var $3: String = ""
@@ -35,9 +28,9 @@ abstract class SawkScript(lines: Iterator[String], val FS: String = "\t") {
 
   def run(): Unit = {
     _begin.apply
-    lines.foreach { line =>
-      $0 = line
-      val fields = line.split(FS)
+
+    it.foreach { fields =>
+      $0 = fields
       $1 = fields.lift(0).getOrElse("")
       $2 = fields.lift(1).getOrElse("")
       $3 = fields.lift(2).getOrElse("")
@@ -50,6 +43,7 @@ abstract class SawkScript(lines: Iterator[String], val FS: String = "\t") {
       $10 = fields.lift(9).getOrElse("")
       _main.apply
     }
+
     _end.apply
   }
 
@@ -58,5 +52,3 @@ abstract class SawkScript(lines: Iterator[String], val FS: String = "\t") {
   }
 
 }
-
-

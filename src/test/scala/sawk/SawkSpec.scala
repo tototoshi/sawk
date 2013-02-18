@@ -6,12 +6,13 @@ import scala.io.Source
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
 
-class SawkSpec extends FunSpec with ShouldMatchers with Using {
+class SawkScriptSpec extends FunSpec with ShouldMatchers with Using {
 
   val tmpfile = File.createTempFile("sawk", "txt", new File("/tmp"))
   tmpfile.deleteOnExit()
 
   // awk スクリプト
+
   class CountUpScript(lines: Iterator[String]) extends SawkScript(lines) {
 
     var data: Map[String, Int] = Map.empty.withDefaultValue(0)
@@ -33,7 +34,7 @@ class SawkSpec extends FunSpec with ShouldMatchers with Using {
     }
   }
 
-  describe("Sawk") {
+  describe("SawkScript") {
 
     it("works fine!") {
       val data="""|りんご	1
@@ -44,9 +45,7 @@ class SawkSpec extends FunSpec with ShouldMatchers with Using {
                   |なし	3
                   |""".stripMargin
 
-      val awkScript = new CountUpScript(data.lines)
-
-      Sawk(awkScript)
+      new CountUpScript(data.lines).run
 
       val expected = """|start
                         |なし	3
@@ -60,5 +59,6 @@ class SawkSpec extends FunSpec with ShouldMatchers with Using {
     }
 
   }
+
 }
 
